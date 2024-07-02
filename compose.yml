@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  ibkr:
+    image: ghcr.io/extrange/ibkr
+    expose:
+      - "6080"
+      - "8888"
+    ulimits:
+      nofile: 10000
+    environment:
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+      TWS_SETTINGS_PATH: /settings
+      # TWOFA_TIMEOUT_ACTION: restart
+      GATEWAY_OR_TWS: gateway
+      #
+      # Variables prefixed with IBC_ override IBCAlpha`s config.ini:
+      IBC_TradingMode: paper
+      IBC_ReadOnlyApi: 'no'
+      # ...
+      # See below for more details
+    volumes:
+     - ./settings:/settings:rw
+     
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - ibkr

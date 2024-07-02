@@ -1,5 +1,4 @@
 .env
-compose.yml
 .pdm-python
 .venv
 *.pyc
